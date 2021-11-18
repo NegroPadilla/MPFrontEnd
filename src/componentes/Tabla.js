@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {DataTable} from "primereact/datatable";
+import { Card } from "primereact/card";
 import {Column} from "primereact/column";
 import {Button} from "primereact/button";
 import {useNavigate} from "react-router-dom";
@@ -33,6 +34,9 @@ const Tabla = () =>{
             console.log(error);
         }
     };
+    useEffect(() => {
+        obtenerTabla();
+    }, []);
 
     const borrarTabla = async(id) =>{
         try{
@@ -88,8 +92,29 @@ const Tabla = () =>{
     return(
         <div>
             <div>
-                
+                <h2>Listado de Calles</h2>
+                <Button
+                    label= "Agregar Calles"
+                    onClick={() =>Nav("/agregar")}
+                    className= "p-button-rounded p-button-success"
+                >
+                </Button>
             </div>
+            <Card>
+                <DataTable value={tabla} responsiveLayout="scroll">
+                    {dynamicColumns}
+                    <columns
+                    body={botonEditar} 
+                    style={{textAlign:'center', width: '8em'}}
+                    >
+                    </columns>
+                    body={botonBorrar} 
+                    style={{textAlign:'center', width: '8em'}}
+                    <columns
+                    >
+                    </columns>
+                </DataTable>
+            </Card>
         </div>
 
     );
