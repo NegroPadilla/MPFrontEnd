@@ -89,6 +89,7 @@ const Tabla = () =>{
             />
         )
     };
+
     return(
         <div>
             <div>
@@ -101,16 +102,22 @@ const Tabla = () =>{
                 </Button>
             </div>
             <Card>
-                <DataTable value={tabla} responsiveLayout="scroll">
+                <DataTable 
+                value={tabla} responsiveLayout="scroll"
+                style={{
+                    width: "100%",
+                    margin: "1rem",
+                     color: "#212529",
+                     border: "1px solid #dee2e6"}}>
                     {dynamicColumns}
                     <columns
                     body={botonEditar} 
                     style={{textAlign:'center', width: '8em'}}
                     >
                     </columns>
+                    <columns
                     body={botonBorrar} 
                     style={{textAlign:'center', width: '8em'}}
-                    <columns
                     >
                     </columns>
                 </DataTable>
