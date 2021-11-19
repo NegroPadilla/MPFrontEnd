@@ -1,18 +1,20 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import {DataTable} from "primereact/datatable";
 import { Card } from "primereact/card";
 import {Column} from "primereact/column";
 import {Button} from "primereact/button";
 import {useNavigate} from "react-router-dom";
-import { Messages } from 'primereact/messages';
 import { confirmDialog } from 'primereact/confirmdialog'
+import Swal from 'sweetalert2';
+import "primereact/resources/themes/nova-accent/theme.css";
 
 const Tabla = () =>{
-    const {tabla, setTabla} = useState([]);
+    const [tabla, setTabla] = useState([]);
     const Nav = useNavigate();
+    const toast = useRef(null);
 
     const columns =[
-        {field: "id", header: "id calle"},
+        {field: "idCalles", header: "id"},
         {field: "Nombre_Calle", header: "Nombre calle"},
         {field: "Nombre_Ciudad", header: "Nombre Ciudad"},
         {field: "Nombre_Provincia", header: "Nombre Provincia"},
@@ -24,6 +26,7 @@ const Tabla = () =>{
             const response = await fetch('http://laravel-api.test/api/calles/get/all'); 
             if(response.status===200){
                 const datos = await response.json();
+                console.log("aaa");
                 setTabla([]);
                 setTabla(datos);
             }
@@ -40,28 +43,32 @@ const Tabla = () =>{
         obtenerTabla();
     }, []);
 
-    const borrarTabla = async(id) =>{
-        try{
-            const response = await fetch('http://laravel-api.test/api/calles/get/${id}',
-            {method: 'DELETE',
+    const borrarTabla = (id) =>{
+            fetch(`http://laravel-api.test/api/calles/${id}`,
+            {method: "DELETE",
              headers:{
-                'Content-Type': 'application/json'
-             }
+                "Content-Type": "application/json",
+                Accept : "application/json",
+                "Access-Control-Allow-Origin" : "*", 
+                "Access-Control-Allow-Credentials" : true 
+             },
+            }).then((response)=>{
+                if(response.status===204){
+                    setTabla([]);
+                    obtenerTabla();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Eliminado',
+                        showConfirmButton: false,
+                        sticky: "true",
+                        onClose: Nav('/')});
+        
+                }
+            setTabla([]);
+            obtenerTabla();
+        
             });
-        if(response.status===204){
-            Messages.current.show({
-                 severity: 'succes', 
-                 summary: 'Elimino la calle con exito', 
-                 sticky: 'true' });
-        }else{
-            Messages.current.show({ 
-                severity: 'error', 
-                summary: 'Error en borrar la calle', 
-                sticky: 'true' });
-        }
-        }catch(error) {
-            console.log(error);
-    }};
+        };
 
     const confirmar = (id) =>{
         confirmDialog({
@@ -77,7 +84,7 @@ const Tabla = () =>{
             <Button
             label="Eliminar calle" 
             className="p-button-rounded p-button-warning"
-            onClick={() => confirmar(rowData.id)}
+            onClick={() => confirmar(rowData.idCalles)}
             />
         )
     };
@@ -87,40 +94,44 @@ const Tabla = () =>{
             <Button
             label="Editar Calle"
             className="p-button-rounded p-button-help"
-            onClick={() => Nav('/editar/${id}')}
+            onClick={() => Nav(`/editar/${rowData.idCalles}`)}
             />
         )
     };
 
-    return(
-        <div style={{margin: "3% 20% 0 24%"}}>
-            <div style={{margin:"0 0 5% 0"}}>
-                <h2 style={{margin:"0 0 0 20%"}}>Listado de Calles</h2>
+    const titulo = () => {
+      return(  <div style={{marginLeft: "20%"}}>Listado de Calles
                 <Button
                     label= "Agregar Calles"
                     onClick={() =>Nav("/agregar")}
                     className= "p-button-rounded p-button-success"
                     style={{
                         width: "20%",
-                        margin: "0 0 0 60%",
+                        marginLeft: "62%",
                     }}
                 >
                 </Button>
             </div>
+      )
+    }
+
+    return(
+        <div>
+            
             <Card
+                title= {titulo}
                 style={{
                 width: "100%",
-                margin: "1rem",
-                color: "#212529",
-                border: "1px solid #dee2e6"}}
+            }}
             >
-                <DataTable value={tabla} responsiveLayout="scroll">
-
+                <DataTable className="table table-striped" value={tabla} responsiveLayout="scroll" style={{color: "#212529"}}>
+                    
                     {dynamicColumns}
 
                     <Column
                     body={botonEditar} 
-                    style={{textAlign:'center'}}
+                    style={{textAlign:'center',
+                    color: "#212529"}}
                     ></Column>
                     <Column
                     body={botonBorrar} 

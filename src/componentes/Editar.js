@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Dropdown } from "primereact/dropdown";
+import Swal from 'sweetalert2';
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
-import { Messages } from 'primereact/messages';
+import { InputText } from 'primereact/inputtext';
+import "primereact/resources/primereact.css";
 
 const Editar = () => {
     const {id} = useParams();
@@ -17,11 +19,13 @@ const Editar = () => {
     const [ciudades, setCiudades] = useState([]);
 
     const CallexId = async (id) => {
-        try{
-            const response = await fetch(`http://laravel-api.test/api/calles/id`,{
+            const response = await fetch(`http://laravel-api.test/api/calles/get/${id}`,{
                 method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    Accept : 'application/json',
+                    "Access-Control-Allow-Origin" : "*", 
+                    "Access-Control-Allow-Credentials" : true 
                 }
             });
             const r = await response.json();
@@ -32,13 +36,9 @@ const Editar = () => {
             setCiudad(r.idCiudad);
             obtenerProvincias(r.idRegion);
             obtenerCiudades(r.idProvincia);
-        }catch(error){
-            console.log(error);
-        }
     };
 
     const añadirCalle = () => {
-        try{
             fetch('http://laravel-api.test/api/calles',{
                 method: 'POST',
                 body: JSON.stringify({
@@ -46,56 +46,54 @@ const Editar = () => {
                     idCiudad: ciudad
                 }),
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    "Access-Control-Allow-Origin" : "*", 
+                    "Access-Control-Allow-Credentials" : true 
                 }
             }).then(r => {
                 if(r.status === 200){
-                    Messages.fire({
+                    Swal.fire({
                         icon: 'success',
                         title: 'Agregado',
                         showConfirmButton: false,
                         sticky: "true",
-                        onClose: Navigate('/')
+                        onClose: Nav('/')
                     });
                 }
             });
-        }catch(error){
-            console.log(error);
-        }
     };
 
     const updateCalle = () => {
         console.log(calle);
         console.log(ciudad);
         console.log(id);
-        try{
-            fetch(`http://laravel-api.test/api/calles/get/id`, {
+
+            fetch(`http://laravel-api.test/api/calles/${id}`, {
                 method: 'PUT',
                 body: JSON.stringify({
                     Nombre_Calle: calle,
                     idCiudad: ciudad
                 }),
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    "Access-Control-Allow-Origin" : "*", 
+                    "Access-Control-Allow-Credentials" : true 
                 }
             }).then(res => {
                 if(res.status===200){
-                    Messages.fire({
+                    Swal.fire({
                     icon: 'success',
                     title: 'Calle editada',
                     showConfirmButton: false,
                     sticky: "true",
-                    onClose: Navigate('/')
+                    onClose: Nav('/')
                     });
             }
             }); 
-     } catch(error) {
-            console.log(error);
-        }
     };
 
     const obtenerRegiones = async () => {
-        try{
+
             const response = await fetch('http://laravel-api.test/api/regiones',{
                 method: 'GET',
                 headers: {
@@ -107,14 +105,11 @@ const Editar = () => {
                 setRegiones(regiones => [...regiones, {label: value.Nombre_Region, value: value.id}]);
             });
 
-        } catch(error) {
-            console.log(error);
-        }
     };
 
     const obtenerProvincias = async (id) => {
         try{
-            const response = await fetch(`http://laravel-api.test/api/provincias/region/id`,{
+            const response = await fetch(`http://laravel-api.test/api/provincias/region/${id}`,{
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -131,7 +126,7 @@ const Editar = () => {
 
     const obtenerCiudades = async (id) => {
         try{
-            const response = await fetch(`http://laravel-api.test/api/ciudades/provincia/id`,{
+            const response = await fetch(`http://laravel-api.test/api/ciudades/provincia/${id}`,{
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -150,13 +145,13 @@ const Editar = () => {
         setProvincias([]);
         setCiudades([]);
         setRegion(e.target.value);
-        getProvincias(e.target.value);
+        obtenerProvincias(e.target.value);
     };
 
     const handleProvincia= (e) => {
         setCiudades([]);
         setProvincia(e.target.value);
-        getCiudades(e.target.value);
+        obtenerCiudades(e.target.value);
     };
 
     const handleEdit = () => {
@@ -171,7 +166,8 @@ const Editar = () => {
 
     return(
         <div>
-            <Card>
+            <Card
+            style={{width: '60%', margin: '10% 35%'}}>
                 <h5>Nombre de la calle</h5>
                 <InputText id="nombreCalle" value={calle} onChange={(e)=>setCalle(e.target.value)} />
                 <h5 style={{ textAlign: "left" }}>Región</h5>
@@ -180,7 +176,7 @@ const Editar = () => {
                     options={regiones}
                     onChange={handleRegion}
                     placeholder="Elige una región"
-                    style={{ width: "80%", margin: "0 10%", textAlign: "left" }}
+                    style={{ width: "40%", margin: "0 0", textAlign: "left" }}
                 />
                 <h5 style={{ textAlign: "left" }}>Provincia</h5>
                 <Dropdown
@@ -188,7 +184,7 @@ const Editar = () => {
                     options={provincias}
                     onChange={handleProvincia}
                     placeholder="Elige una provincia"
-                    style={{ width: "80%", margin: "0 10%", textAlign: "left" }}
+                    style={{ width: "40%", margin: "0 0", textAlign: "left" }}
                 />
                 <h5 style={{ textAlign: "left" }}>Ciudad</h5>
                 <Dropdown
@@ -196,15 +192,17 @@ const Editar = () => {
                     options={ciudades}
                     onChange={(e) => setCiudad(e.value)}
                     placeholder="Elige una ciudad"
+                    style={{width: "30%"}}
                 />
                 <Button label={id === undefined ? "Agregar": "Editar"} 
                          onClick={handleEdit} 
+                         style={{width: '20%', marginLeft: "30%"}}
                          className="p-button-raised" />
 
                 <Button label="Cancelar" 
-                        style={{width: '40%', marginLeft:'5%'}} 
+                        style={{width: '20%', marginLeft:'2%'}} 
                         className="p-button-raised p-button-danger"
-                        onClick={()=>Navigate('/')}/>
+                        onClick={()=>Nav('/')}/>
             </Card>
         </div>
     )
