@@ -173,7 +173,7 @@ const Editar = () => {
     return(
         <div>
             <Card
-            style={{width: '60%', margin: '10% 20%'}}>
+            style={{width: '50%', margin: '10% 20%'}}>
                 <h5>Nombre de la calle</h5>
                 <InputText id="nombreCalle" value={calle} onChange={(e)=>setCalle(e.target.value)} />
                 <h5 style={{ textAlign: "left" }}>Región</h5>
@@ -198,7 +198,7 @@ const Editar = () => {
                     options={ciudades}
                     onChange={(e) => setCiudad(e.target.value)}
                     placeholder="Elige una ciudad"
-                    style={{width: "30%"}}
+                    style={{width: "40%"}}
                 />
                 <Button label={id === undefined ? "Agregar": "Editar"} 
                          onClick={handleEdit} 
@@ -206,7 +206,7 @@ const Editar = () => {
                          className="p-button-raised" />
 
                 <Button label="Cancelar" 
-                        style={{width: '20%', marginLeft:'2%'}} 
+                        style={{width: '20%', marginLeft:'70%'}} 
                         className="p-button-raised p-button-danger"
                         onClick={()=>Nav('/')}/>
             </Card>
