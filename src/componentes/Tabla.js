@@ -5,6 +5,7 @@ import {Column} from "primereact/column";
 import {Button} from "primereact/button";
 import {useNavigate} from "react-router-dom";
 import { confirmDialog } from 'primereact/confirmdialog'
+import { classNames } from 'primereact/utils';
 import Swal from 'sweetalert2';
 import "primereact/resources/themes/nova-accent/theme.css";
 
@@ -124,7 +125,7 @@ const Tabla = () =>{
                 width: "100%",
             }}
             >
-                <DataTable className="table table-striped" value={tabla} responsiveLayout="scroll" style={{color: "#212529"}}>
+                <DataTable className="table table-striped" value={tabla} responsiveLayout="scroll">
                     
                     {dynamicColumns}
 

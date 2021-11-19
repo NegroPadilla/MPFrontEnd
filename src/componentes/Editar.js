@@ -19,7 +19,7 @@ const Editar = () => {
     const [ciudades, setCiudades] = useState([]);
 
     const CallexId = async (id) => {
-            const response = await fetch(`http://laravel-api.test/api/calles/get/${id}`,{
+            const response = await fetch(`http://laravel-api.test/api/calles/${id}`,{
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -94,10 +94,12 @@ const Editar = () => {
 
     const obtenerRegiones = async () => {
 
-            const response = await fetch('http://laravel-api.test/api/regiones',{
+            const response = await fetch(`http://laravel-api.test/api/regiones`,{
                 method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    "Access-Control-Allow-Origin" : "*", 
+                    "Access-Control-Allow-Credentials" : true 
                 }
             });
             const r = await response.json();
@@ -112,7 +114,9 @@ const Editar = () => {
             const response = await fetch(`http://laravel-api.test/api/provincias/region/${id}`,{
                 method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    "Access-Control-Allow-Origin" : "*", 
+                    "Access-Control-Allow-Credentials" : true 
                 }
             });
             const r = await response.json();
@@ -129,7 +133,9 @@ const Editar = () => {
             const response = await fetch(`http://laravel-api.test/api/ciudades/provincia/${id}`,{
                 method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    "Access-Control-Allow-Origin" : "*", 
+                    "Access-Control-Allow-Credentials" : true 
                 }
             });
             const r = await response.json();
@@ -167,7 +173,7 @@ const Editar = () => {
     return(
         <div>
             <Card
-            style={{width: '60%', margin: '10% 35%'}}>
+            style={{width: '60%', margin: '10% 20%'}}>
                 <h5>Nombre de la calle</h5>
                 <InputText id="nombreCalle" value={calle} onChange={(e)=>setCalle(e.target.value)} />
                 <h5 style={{ textAlign: "left" }}>Región</h5>
@@ -190,7 +196,7 @@ const Editar = () => {
                 <Dropdown
                     value={ciudad}
                     options={ciudades}
-                    onChange={(e) => setCiudad(e.value)}
+                    onChange={(e) => setCiudad(e.target.value)}
                     placeholder="Elige una ciudad"
                     style={{width: "30%"}}
                 />
