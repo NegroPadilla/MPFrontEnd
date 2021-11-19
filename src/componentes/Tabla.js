@@ -5,28 +5,25 @@ import {Column} from "primereact/column";
 import {Button} from "primereact/button";
 import {useNavigate} from "react-router-dom";
 import { Messages } from 'primereact/messages';
+import { confirmDialog } from 'primereact/confirmdialog'
 
 const Tabla = () =>{
     const {tabla, setTabla} = useState([]);
     const Nav = useNavigate();
 
     const columns =[
-        {field: 'id', header: 'id calle'},
-        {field: 'Nombre_Calle', header: 'Nombre calle'},
-        {field: 'Nombre_Ciudad', header:'Nombre Ciudad'},
-        {field: 'Nombre_Provincia', header:'Nombre Provincia'},
-        {field: 'Nombre_Region', header:'Nombre Region'},
+        {field: "id", header: "id calle"},
+        {field: "Nombre_Calle", header: "Nombre calle"},
+        {field: "Nombre_Ciudad", header: "Nombre Ciudad"},
+        {field: "Nombre_Provincia", header: "Nombre Provincia"},
+        {field: "Nombre_Region", header: "Nombre Region"},
     ];
-
-    const dynamicColumns = columns.map((col, i) => {
-        return <Column key={col.field} field={col.field} header={col.header} />;
-    });
 
     const obtenerTabla = async() =>{
         try{
             const response = await fetch('http://laravel-api.test/api/calles/get/all'); 
             if(response.status===200){
-                const datos = response.json();
+                const datos = await response.json();
                 setTabla([]);
                 setTabla(datos);
             }
@@ -34,13 +31,18 @@ const Tabla = () =>{
             console.log(error);
         }
     };
+
+    const dynamicColumns = columns.map((col, i) => {
+        return <Column key={i} field={col.field} header={col.header} />;
+    });
+
     useEffect(() => {
         obtenerTabla();
     }, []);
 
     const borrarTabla = async(id) =>{
         try{
-            const response = await fetch('http://laravel-api.test/api/calles/get/all',
+            const response = await fetch('http://laravel-api.test/api/calles/get/${id}',
             {method: 'DELETE',
              headers:{
                 'Content-Type': 'application/json'
@@ -85,41 +87,46 @@ const Tabla = () =>{
             <Button
             label="Editar Calle"
             className="p-button-rounded p-button-help"
-            onClick={() => Nav('/editar/${rowData.id}')}
+            onClick={() => Nav('/editar/${id}')}
             />
         )
     };
 
     return(
-        <div>
-            <div>
-                <h2>Listado de Calles</h2>
+        <div style={{margin: "3% 20% 0 24%"}}>
+            <div style={{margin:"0 0 5% 0"}}>
+                <h2 style={{margin:"0 0 0 20%"}}>Listado de Calles</h2>
                 <Button
                     label= "Agregar Calles"
                     onClick={() =>Nav("/agregar")}
                     className= "p-button-rounded p-button-success"
+                    style={{
+                        width: "20%",
+                        margin: "0 0 0 60%",
+                    }}
                 >
                 </Button>
             </div>
-            <Card>
-                <DataTable 
-                value={tabla} responsiveLayout="scroll"
+            <Card
                 style={{
-                    width: "100%",
-                    margin: "1rem",
-                     color: "#212529",
-                     border: "1px solid #dee2e6"}}>
+                width: "100%",
+                margin: "1rem",
+                color: "#212529",
+                border: "1px solid #dee2e6"}}
+            >
+                <DataTable value={tabla} responsiveLayout="scroll">
+
                     {dynamicColumns}
-                    <columns
+
+                    <Column
                     body={botonEditar} 
-                    style={{textAlign:'center', width: '8em'}}
-                    >
-                    </columns>
-                    <columns
+                    style={{textAlign:'center'}}
+                    ></Column>
+                    <Column
                     body={botonBorrar} 
-                    style={{textAlign:'center', width: '8em'}}
-                    >
-                    </columns>
+                    style={{textAlign:'center'}}
+                    ></Column>
+
                 </DataTable>
             </Card>
         </div>
